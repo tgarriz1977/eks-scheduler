@@ -1,0 +1,41 @@
+# --- Configuracion requerida ---
+aws_region   = "us-east-1"
+cluster_name = "mi-cluster-eks"
+
+# --- Horarios (por defecto 23:00 a 07:00 ART) ---
+# schedule_stop  = "cron(0 2 * * ? *)"   # 23:00 ART en UTC
+# schedule_start = "cron(0 10 * * ? *)"   # 07:00 ART en UTC
+
+# --- Usando timezone nativo de EventBridge (recomendado) ---
+# Si usas schedule_timezone, podes poner el cron en hora local:
+# schedule_stop  = "cron(0 23 * * ? *)"
+# schedule_start = "cron(0 7 * * ? *)"
+# schedule_timezone = "America/Argentina/Buenos_Aires"
+
+# --- Solo lunes a viernes (ejemplo) ---
+# schedule_stop  = "cron(0 23 ? * MON-FRI *)"
+# schedule_start = "cron(0 7 ? * MON-FRI *)"
+
+# --- Configuracion de node groups al encender ---
+# Si no se especifica, usa min=2, desired=2, max=4 por defecto
+node_groups_config = {
+  "ng-general" = {
+    min_size     = 2
+    desired_size = 3
+    max_size     = 5
+  }
+  # "ng-spot" = {
+  #   min_size     = 1
+  #   desired_size = 2
+  #   max_size     = 10
+  # }
+}
+
+# --- Notificacion por email ---
+notification_email = "tu-email@ejemplo.com"
+
+tags = {
+  Project     = "eks-scheduler"
+  Environment = "production"
+  ManagedBy   = "terraform"
+}

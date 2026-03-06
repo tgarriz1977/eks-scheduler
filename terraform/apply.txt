@@ -1,0 +1,424 @@
+admin@ip-172-31-13-55:~/staging/eks-scheduler/terraform$ terraform apply
+data.archive_file.lambda: Reading...
+data.archive_file.lambda: Read complete after 0s [id=61a76171a11e054aa65f439cef452affdd040728]
+data.aws_iam_policy_document.scheduler_assume: Reading...
+data.aws_iam_policy_document.lambda_assume: Reading...
+data.aws_iam_policy_document.scheduler_assume: Read complete after 0s [id=52247394]
+data.aws_iam_policy_document.lambda_assume: Read complete after 0s [id=2690255455]
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # data.aws_iam_policy_document.lambda_eks will be read during apply
+  # (config refers to values not yet known)
+ <= data "aws_iam_policy_document" "lambda_eks" {
+      + id            = (known after apply)
+      + json          = (known after apply)
+      + minified_json = (known after apply)
+
+      + statement {
+          + actions   = [
+              + "eks:DescribeNodegroup",
+              + "eks:ListNodegroups",
+              + "eks:UpdateNodegroupConfig",
+            ]
+          + resources = [
+              + "*",
+            ]
+        }
+      + statement {
+          + actions   = [
+              + "sns:Publish",
+            ]
+          + resources = [
+              + (known after apply),
+            ]
+        }
+    }
+
+  # data.aws_iam_policy_document.scheduler_invoke_lambda will be read during apply
+  # (config refers to values not yet known)
+ <= data "aws_iam_policy_document" "scheduler_invoke_lambda" {
+      + id            = (known after apply)
+      + json          = (known after apply)
+      + minified_json = (known after apply)
+
+      + statement {
+          + actions   = [
+              + "lambda:InvokeFunction",
+            ]
+          + resources = [
+              + (known after apply),
+            ]
+        }
+    }
+
+  # aws_iam_policy.lambda_eks will be created
+  + resource "aws_iam_policy" "lambda_eks" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = "eks-scheduler-lambda-eks-policy"
+      + name_prefix      = (known after apply)
+      + path             = "/"
+      + policy           = (known after apply)
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+      + tags_all         = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+    }
+
+  # aws_iam_policy.scheduler_invoke_lambda will be created
+  + resource "aws_iam_policy" "scheduler_invoke_lambda" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = "eks-scheduler-invoke-lambda-policy"
+      + name_prefix      = (known after apply)
+      + path             = "/"
+      + policy           = (known after apply)
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+      + tags_all         = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+    }
+
+  # aws_iam_role.lambda will be created
+  + resource "aws_iam_role" "lambda" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "lambda.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "eks-scheduler-lambda-role"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags                  = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+      + tags_all              = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.scheduler will be created
+  + resource "aws_iam_role" "scheduler" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "scheduler.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "eks-scheduler-eventbridge-role"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags                  = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+      + tags_all              = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.lambda_eks will be created
+  + resource "aws_iam_role_policy_attachment" "lambda_eks" {
+      + id         = (known after apply)
+      + policy_arn = (known after apply)
+      + role       = "eks-scheduler-lambda-role"
+    }
+
+  # aws_iam_role_policy_attachment.lambda_logs will be created
+  + resource "aws_iam_role_policy_attachment" "lambda_logs" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      + role       = "eks-scheduler-lambda-role"
+    }
+
+  # aws_iam_role_policy_attachment.scheduler_invoke_lambda will be created
+  + resource "aws_iam_role_policy_attachment" "scheduler_invoke_lambda" {
+      + id         = (known after apply)
+      + policy_arn = (known after apply)
+      + role       = "eks-scheduler-eventbridge-role"
+    }
+
+  # aws_lambda_function.eks_scheduler will be created
+  + resource "aws_lambda_function" "eks_scheduler" {
+      + architectures                  = (known after apply)
+      + arn                            = (known after apply)
+      + code_sha256                    = (known after apply)
+      + filename                       = "./../lambda/package.zip"
+      + function_name                  = "eks-scheduler"
+      + handler                        = "index.handler"
+      + id                             = (known after apply)
+      + invoke_arn                     = (known after apply)
+      + last_modified                  = (known after apply)
+      + memory_size                    = 128
+      + package_type                   = "Zip"
+      + publish                        = false
+      + qualified_arn                  = (known after apply)
+      + qualified_invoke_arn           = (known after apply)
+      + region                         = "us-east-2"
+      + reserved_concurrent_executions = -1
+      + response_streaming_invoke_arn  = (known after apply)
+      + role                           = (known after apply)
+      + runtime                        = "python3.12"
+      + signing_job_arn                = (known after apply)
+      + signing_profile_version_arn    = (known after apply)
+      + skip_destroy                   = false
+      + source_code_hash               = "cUKr5NoL8gh66HP+RJpYoBYOgDq4Ze3m4W3ezeDbDMc="
+      + source_code_size               = (known after apply)
+      + tags                           = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+      + tags_all                       = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+      + timeout                        = 60
+      + version                        = (known after apply)
+
+      + environment {
+          + variables = (known after apply)
+        }
+
+      + ephemeral_storage (known after apply)
+
+      + logging_config (known after apply)
+
+      + tracing_config (known after apply)
+    }
+
+  # aws_scheduler_schedule.start will be created
+  + resource "aws_scheduler_schedule" "start" {
+      + action_after_completion      = (known after apply)
+      + arn                          = (known after apply)
+      + description                  = "Enciende los nodos del cluster EKS a las 07:00 ART"
+      + group_name                   = (known after apply)
+      + id                           = (known after apply)
+      + name                         = "eks-scheduler-start"
+      + name_prefix                  = (known after apply)
+      + region                       = "us-east-2"
+      + schedule_expression          = "cron(0 7 * * ? *)"
+      + schedule_expression_timezone = "America/Argentina/Buenos_Aires"
+      + state                        = "ENABLED"
+
+      + flexible_time_window {
+          + mode = "OFF"
+        }
+
+      + target {
+          + arn      = (known after apply)
+          + input    = jsonencode(
+                {
+                  + action       = "start"
+                  + cluster_name = "colegio-staging"
+                  + node_groups  = {
+                      + gpu-spot                         = {
+                          + desired_size = 0
+                          + max_size     = 1
+                          + min_size     = 0
+                        }
+                      + green-20250110034945861700000001 = {
+                          + desired_size = 2
+                          + max_size     = 3
+                          + min_size     = 2
+                        }
+                    }
+                }
+            )
+          + role_arn = (known after apply)
+        }
+    }
+
+  # aws_scheduler_schedule.stop will be created
+  + resource "aws_scheduler_schedule" "stop" {
+      + action_after_completion      = (known after apply)
+      + arn                          = (known after apply)
+      + description                  = "Apaga los nodos del cluster EKS a las 22:00 ART"
+      + group_name                   = (known after apply)
+      + id                           = (known after apply)
+      + name                         = "eks-scheduler-stop"
+      + name_prefix                  = (known after apply)
+      + region                       = "us-east-2"
+      + schedule_expression          = "cron(0 22 * * ? *)"
+      + schedule_expression_timezone = "America/Argentina/Buenos_Aires"
+      + state                        = "ENABLED"
+
+      + flexible_time_window {
+          + mode = "OFF"
+        }
+
+      + target {
+          + arn      = (known after apply)
+          + input    = jsonencode(
+                {
+                  + action       = "stop"
+                  + cluster_name = "colegio-staging"
+                }
+            )
+          + role_arn = (known after apply)
+        }
+    }
+
+  # aws_sns_topic.eks_scheduler[0] will be created
+  + resource "aws_sns_topic" "eks_scheduler" {
+      + arn                         = (known after apply)
+      + beginning_archive_time      = (known after apply)
+      + content_based_deduplication = false
+      + fifo_throughput_scope       = (known after apply)
+      + fifo_topic                  = false
+      + id                          = (known after apply)
+      + name                        = "eks-scheduler-notifications"
+      + name_prefix                 = (known after apply)
+      + owner                       = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = "us-east-2"
+      + signature_version           = (known after apply)
+      + tags                        = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+      + tags_all                    = {
+          + "Environment" = "staging"
+          + "ManagedBy"   = "terraform"
+          + "Project"     = "eks-scheduler"
+        }
+      + tracing_config              = (known after apply)
+    }
+
+  # aws_sns_topic_subscription.email[0] will be created
+  + resource "aws_sns_topic_subscription" "email" {
+      + arn                             = (known after apply)
+      + confirmation_timeout_in_minutes = 1
+      + confirmation_was_authenticated  = (known after apply)
+      + endpoint                        = "tgarriz@gmail.com"
+      + endpoint_auto_confirms          = false
+      + filter_policy_scope             = (known after apply)
+      + id                              = (known after apply)
+      + owner_id                        = (known after apply)
+      + pending_confirmation            = (known after apply)
+      + protocol                        = "email"
+      + raw_message_delivery            = false
+      + region                          = "us-east-2"
+      + topic_arn                       = (known after apply)
+    }
+
+Plan: 12 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + lambda_function_arn  = (known after apply)
+  + lambda_function_name = "eks-scheduler"
+  + schedule_start_arn   = (known after apply)
+  + schedule_stop_arn    = (known after apply)
+  + sns_topic_arn        = (known after apply)
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+aws_iam_role.lambda: Creating...
+aws_iam_role.scheduler: Creating...
+aws_sns_topic.eks_scheduler[0]: Creating...
+aws_sns_topic.eks_scheduler[0]: Creation complete after 0s [id=arn:aws:sns:us-east-2:982170164096:eks-scheduler-notifications]
+data.aws_iam_policy_document.lambda_eks: Reading...
+data.aws_iam_policy_document.lambda_eks: Read complete after 0s [id=1427972484]
+aws_sns_topic_subscription.email[0]: Creating...
+aws_iam_policy.lambda_eks: Creating...
+aws_iam_role.scheduler: Creation complete after 0s [id=eks-scheduler-eventbridge-role]
+aws_iam_role.lambda: Creation complete after 0s [id=eks-scheduler-lambda-role]
+aws_iam_role_policy_attachment.lambda_logs: Creating...
+aws_lambda_function.eks_scheduler: Creating...
+aws_sns_topic_subscription.email[0]: Creation complete after 1s [id=arn:aws:sns:us-east-2:982170164096:eks-scheduler-notifications:544c6f96-961d-40e3-9a58-9ec073d2e151]
+aws_iam_role_policy_attachment.lambda_logs: Creation complete after 1s [id=eks-scheduler-lambda-role/arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole]
+aws_iam_policy.lambda_eks: Creation complete after 1s [id=arn:aws:iam::982170164096:policy/eks-scheduler-lambda-eks-policy]
+aws_iam_role_policy_attachment.lambda_eks: Creating...
+aws_iam_role_policy_attachment.lambda_eks: Creation complete after 0s [id=eks-scheduler-lambda-role/arn:aws:iam::982170164096:policy/eks-scheduler-lambda-eks-policy]
+aws_lambda_function.eks_scheduler: Still creating... [00m10s elapsed]
+aws_lambda_function.eks_scheduler: Still creating... [00m20s elapsed]
+aws_lambda_function.eks_scheduler: Creation complete after 22s [id=eks-scheduler]
+data.aws_iam_policy_document.scheduler_invoke_lambda: Reading...
+data.aws_iam_policy_document.scheduler_invoke_lambda: Read complete after 0s [id=1541669258]
+aws_scheduler_schedule.stop: Creating...
+aws_scheduler_schedule.start: Creating...
+aws_iam_policy.scheduler_invoke_lambda: Creating...
+aws_scheduler_schedule.start: Creation complete after 1s [id=default/eks-scheduler-start]
+aws_scheduler_schedule.stop: Creation complete after 1s [id=default/eks-scheduler-stop]
+aws_iam_policy.scheduler_invoke_lambda: Creation complete after 1s [id=arn:aws:iam::982170164096:policy/eks-scheduler-invoke-lambda-policy]
+aws_iam_role_policy_attachment.scheduler_invoke_lambda: Creating...
+aws_iam_role_policy_attachment.scheduler_invoke_lambda: Creation complete after 0s [id=eks-scheduler-eventbridge-role/arn:aws:iam::982170164096:policy/eks-scheduler-invoke-lambda-policy]
+
+Apply complete! Resources: 12 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+lambda_function_arn = "arn:aws:lambda:us-east-2:982170164096:function:eks-scheduler"
+lambda_function_name = "eks-scheduler"
+schedule_start_arn = "arn:aws:scheduler:us-east-2:982170164096:schedule/default/eks-scheduler-start"
+schedule_stop_arn = "arn:aws:scheduler:us-east-2:982170164096:schedule/default/eks-scheduler-stop"
+sns_topic_arn = "arn:aws:sns:us-east-2:982170164096:eks-scheduler-notifications"
