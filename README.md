@@ -1,9 +1,25 @@
 # EKS Scheduler
 
-Apaga y enciende automáticamente los nodos de un cluster EKS según horarios programados, para reducir costos fuera del horario laboral.
+![Terraform](https://img.shields.io/badge/Terraform-1.0+-800000?style=flat-square&logo=hashicorp&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-EKS%20%7C%20Lambda%20%7C%20EventBridge-232F3E?style=flat-square&logo=amazonwebservices&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)
 
-- **Apagado**: 22:00 ART — escala todos los node groups a 0
-- **Encendido**: 07:00 ART — restaura los node groups a sus valores configurados
+Apaga y enciende automáticamente los nodos de un cluster **AWS EKS** según horarios programados, para reducir costos fuera del horario laboral.
+
+**Cómo funciona:**
+
+- **Apagado** (22:00 ART): escala todos los node groups a `0`
+- **Encendido** (07:00 ART): restaura los node groups a los valores configurados
+- **Notificaciones**: email vía SNS al encender/apagar (opcional)
+
+## Stack
+
+| Componente | Rol |
+|-----------|-----|
+| **Terraform** | Provisionamiento de toda la infraestructura |
+| **EventBridge Scheduler** | Dispara el schedule (cron) |
+| **AWS Lambda** (Python 3.12) | Escala los node groups via EKS API |
+| **SNS** | Notificaciones por email |
 
 ---
 
@@ -142,3 +158,7 @@ aws eks list-nodegroups --cluster-name nombre-del-cluster
 aws eks describe-nodegroup --cluster-name nombre-del-cluster --nodegroup-name ng-general \
   --query 'nodegroup.scalingConfig'
 ```
+
+## Autor
+
+Juan Pablo Garriz
